@@ -33,7 +33,7 @@ def SetupEmbedding(model_name):
 def SetupVectorDatabase(files_path,vb_path,hf_embeddings):
     loader = DirectoryLoader(
         files_path,
-        glob="*.txt",
+        glob="**/*.md",
         loader_cls=TextLoader
     )
     documents = loader.load()
