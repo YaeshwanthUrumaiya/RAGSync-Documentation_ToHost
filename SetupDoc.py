@@ -5,6 +5,7 @@ import boto3
 import shutil
 import argparse
 from pathlib import Path
+from dotenv import load_dotenv
 
 def ensure_folder_exists(folder_path):
     main_file_path = folder_path
@@ -43,6 +44,7 @@ if __name__ == '__main__':
         aws_secret_key = args.secretkey
     else:
         print("Using Default User")
+        load_dotenv()
         aws_access_key = os.getenv('AWS_ACCESS_KEY_ID')
         aws_secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     
