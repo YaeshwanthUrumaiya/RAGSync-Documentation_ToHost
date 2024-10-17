@@ -22,7 +22,7 @@ from langchain.retrievers.document_compressors import EmbeddingsFilter
 from langchain.retrievers import EnsembleRetriever
 
 def format_Tdocs(docs, k = 10):
-    return "\n\n".join("Source Of This Document: "+doc[0].metadata['source']+"\nDcoument: "+doc[0].page_content for doc in docs[0:k+1])
+    return "\n\n".join("Path Of This Document: "+doc[0].metadata['source']+"\nDcoument: "+doc[0].page_content for doc in docs[0:k+1])
 def createQuestionsList(text):
     return text.split("\n")
 def reciprocal_rank_fusion(results, k=60):
@@ -110,9 +110,16 @@ def Get_Reponse(user_query, chat_history, bedrock, llm, ensemble_retriever):
     
     retrieval_chain_rag_fusion = getMoreQuestions | ensemble_retriever.map() | reciprocal_rank_fusion
     
-    template = """Imagine you are a developer and give me answer to the question based on the context alone.
-    Provide the sources of the documentation as well. (documentation url is mentioned is sent to you as well)
-    And in the case of providing the pictures, provide the url of the photo. (photo url is mentioned within the documentation)
+    template = """Imagine you are a developer and give me answer to the question based on the documentation alone.
+    
+    Documentations provided to you are in MarkDown Format.
+    
+    Pictures are present in the documentation but will not be given to you.
+    It will presented to you in the form of: ![Image's Alt Text](Image's Local Path)
+    So try to understand the image's content using it's Path and alt text.
+    If a user's query requries an answer with images, you should always provide the image's path, so the user can view the image. Failing to link the correct path from the documentation would deem the answer unusable. 
+    
+    Source of the Documentation should be provided as well (Documentation path is also sent to you) and failing to do so will deem the answer unusable as well. 
     
     NOTE: Do not hallucinate. Answer based only on the documentation provided. If something isn't explicitly mentioned within the documentation, do not assume anything unless you have a strong reason to. 
     If incase of you are assuming, mention that fact along with your reason to assume something within the answer. In the case of assuming, draw conclusions based only from the documentation and when doing so, explain your train of thought to conclude as such.
